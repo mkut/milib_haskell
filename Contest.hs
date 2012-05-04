@@ -15,9 +15,9 @@ import IO
 import Text.Parsec.Prim
 import Text.Parsec.Combinator
 import Text.Parsec.Char
+import Text.Printf
 import Data.Functor.Identity
 import Control.Monad
-import Text.Printf
 
 type Printer a = Handle -> a -> IO ()
 type Solver a b = a -> b
@@ -61,5 +61,6 @@ hGCJMain hin hout printer solver parser =
              spaces
              count t parser
          <?> "GCJMain"
+
 
 -- vim: set expandtab:
