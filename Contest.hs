@@ -11,7 +11,7 @@ module Milib.Contest
 
 import Milib.IO
 import qualified Data.ByteString.Lazy.Char8 as C
-import IO
+import System.IO
 import Text.Parsec.Prim
 import Text.Parsec.Combinator
 import Text.Parsec.Char
@@ -61,6 +61,5 @@ hGCJMain hin hout printer solver parser =
              spaces
              count t parser
          <?> "GCJMain"
-
 
 -- vim: set expandtab:
