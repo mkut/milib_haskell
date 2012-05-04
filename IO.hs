@@ -6,6 +6,9 @@ module Milib.IO
    , float
    , float'
 
+   , word
+   , word'
+
    -- from Text.Parsec.Combinator
    , many1
    , count
@@ -13,6 +16,8 @@ module Milib.IO
    -- from Text.Parsec.Char
    , spaces
    , char
+   , letter
+   , string
    ) where
 
 import Text.Parsec.Prim
@@ -45,5 +50,11 @@ float' =
 
 float :: (Stream s m Char, Floating a, Read a) => ParsecT s u m a
 float = do spaces; float'
+
+word' :: Stream s m Char => ParsecT s u m String
+word' = many1 letter
+
+word :: Stream s m Char => ParsecT s u m String
+word = do spaces; word'
 
 -- vim: set expandtab:
