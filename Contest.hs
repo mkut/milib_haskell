@@ -7,6 +7,8 @@ module Milib.Contest
 
    , gcjMain
    , hGCJMain
+   , gcjMainLn
+   , hGCJMainLn
    ) where
 
 import Milib.IO
@@ -54,6 +56,25 @@ hGCJMain hin hout printer solver parser =
          where
             f (x, i) = do
                hPrintf h "Case #%d: " i
+               printer h x
+      gcjSolver = map solver
+      gcjParser =
+         do  t <- number
+             spaces
+             count t parser
+         <?> "GCJMain"
+
+gcjMainLn :: CMain a b
+gcjMainLn = hGCJMainLn stdin stdout
+
+hGCJMainLn :: Handle -> Handle -> CMain a b
+hGCJMainLn hin hout printer solver parser =
+   hContestMain hin hout gcjPrinter gcjSolver gcjParser
+   where
+      gcjPrinter h xs = mapM_ f $ zip xs ([1..] :: [Int])
+         where
+            f (x, i) = do
+               hPrintf h "Case #%d:\n" i
                printer h x
       gcjSolver = map solver
       gcjParser =
