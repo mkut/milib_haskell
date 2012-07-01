@@ -18,6 +18,8 @@ module Milib.IO
    , char
    , letter
    , string
+   , digit
+   , anyChar
    ) where
 
 import Text.Parsec.Prim
