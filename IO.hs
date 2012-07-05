@@ -46,7 +46,7 @@ floatDot' =
 float' :: (Stream s m Char, Floating a, Read a) => ParsecT s u m a
 float' =
        try floatDot'
-   <|> do x <- number
+   <|> do x <- number'
           return $ fromIntegral x
    <?> "float"
 
