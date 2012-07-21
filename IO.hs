@@ -9,6 +9,8 @@ module Milib.IO
    , word
    , word'
 
+   , newline2
+
    -- from Text.Parsec.Combinator
    , many1
    , count
@@ -58,5 +60,16 @@ word' = many1 letter
 
 word :: Stream s m Char => ParsecT s u m String
 word = do spaces; word'
+
+newline2 :: Stream s m Char => ParsecT s u m String
+newline2 = do
+   cr <- optionMaybe $ char '\r'
+   case cr of
+      Nothing -> do
+         lf <- newline
+         return [lf]
+      Just cr' -> do
+         lf <- newline
+         return [cr', lf]
 
 -- vim: set expandtab:
