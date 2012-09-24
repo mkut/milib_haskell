@@ -3,18 +3,23 @@
 
 name:                milib
 version:             0.1.0.0
--- synopsis:            
--- description:         
--- license:             
+synopsis:            MILIB
+description:         MILIB
+license:             BSD3
 license-file:        LICENSE
 author:              mkut
 maintainer:          mkut.at@gmail.com
 -- copyright:           
--- category:            
+category:            Development
 build-type:          Simple
 cabal-version:       >=1.8
 
+source-repository head
+  type:              git
+  location:          https://github.com/mkut/milib_haskell.git
+
 library
+  HS-source-dirs:      src/
   exposed-modules:     Milib.Geometry
                      , Milib.Contest
                      , Milib.IO
@@ -31,4 +36,3 @@ library
                      , transformers ==0.2.*
                      , fgl ==5.4.*
                      , containers ==0.5.*
-                     , haskell98 ==1.1.*
