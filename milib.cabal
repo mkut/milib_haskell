@@ -3,8 +3,8 @@
 
 name:                milib
 version:             0.1.0.0
-synopsis:            MILIB
-description:         MILIB
+synopsis:            milib
+description:         milib
 license:             BSD3
 license-file:        LICENSE
 author:              mkut
@@ -15,24 +15,11 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 source-repository head
-  type:              git
-  location:          https://github.com/mkut/milib_haskell.git
+   type:             git
+   location:         https://github.com/mkut/milib_haskell.git
 
 library
-  HS-source-dirs:      src/
-  exposed-modules:     Milib.Geometry
-                     , Milib.Contest
-                     , Milib.IO
-                     , Milib.Data.STRef
-                     , Milib.Data.Graph.Grid
-                     , Milib.Data.Set.ST
-                     , Milib.Data.Heap.ST
-                     , Milib.Data.Map.ST
-                     , Milib.Algorithm.Dijkstra
+  exposed-modules:     Milib.Geometry, Milib.Contest, Milib.IO, Milib.Data.STRef, Milib.Data.Graph.Grid, Milib.Data.Set.ST, Milib.Data.Heap.ST, Milib.Data.Map.ST, Milib.Algorithm.Dijkstra
   -- other-modules:       
-  build-depends:       base ==4.5.*
-                     , bytestring ==0.9.*
-                     , parsec ==3.1.*
-                     , transformers ==0.3.*
-                     , fgl ==5.4.*
-                     , containers ==0.4.*
+  build-depends:       base ==4.5.*, bytestring ==0.9.*, parsec ==3.1.2, transformers ==0.3.*, fgl ==5.4.*, containers ==0.4.*
+  hs-source-dirs:      src
