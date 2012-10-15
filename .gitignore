@@ -1,3 +1,4 @@
-dist
 *.o
 *.hi
+dist/*
+!dist/milib-0.1.0.0.tar.gz

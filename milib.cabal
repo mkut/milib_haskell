@@ -30,9 +30,9 @@ library
                      , Milib.Data.Map.ST
                      , Milib.Algorithm.Dijkstra
   -- other-modules:       
-  build-depends:       base ==4.3.*
+  build-depends:       base ==4.5.*
                      , bytestring ==0.9.*
                      , parsec ==3.1.*
-                     , transformers ==0.2.*
+                     , transformers ==0.3.*
                      , fgl ==5.4.*
-                     , containers ==0.5.*
+                     , containers ==0.4.*
