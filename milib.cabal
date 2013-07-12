@@ -2,7 +2,7 @@
 --  see http://haskell.org/cabal/users-guide/
 
 name:                milib
-version:             0.1.0.1
+version:             0.1.1.0
 synopsis:            milib
 description:         milib
 license:             BSD3

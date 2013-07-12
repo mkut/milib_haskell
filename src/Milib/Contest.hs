@@ -5,83 +5,74 @@
 module Milib.Contest
    ( contestMain
    , hContestMain
+   , hContestMainN
 
-   , gcjMain
-   , hGCJMain
-   , gcjMainLn
-   , hGCJMainLn
+   , parserWithoutError
+   , parsec
+   , gcjParsec
+   , gcjPrinter
+   , gcjPrinterLn
    ) where
 
+import Control.Applicative
 import Control.Monad
-import qualified Data.ByteString.Lazy.Char8 as C
+import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Functor.Identity
 import System.IO
-import Text.Parsec.Char
-import Text.Parsec.Combinator
-import Text.Parsec.Prim
-import Text.Printf
+import qualified Text.Parsec.ByteString.Lazy
+import Text.Parsec.Error (ParseError)
+import Text.Parsec.Prim (runParser, Parsec, Stream, (<?>), uncons)
+import Text.Printf (hPrintf)
 import Milib.IO
 
 type Printer b = Handle -> b -> IO ()
 type Solver a b = a -> b
-type Parser a = Stream C.ByteString Identity Char => Parsec C.ByteString () a
-type CMain a b = Printer b -> Solver a b -> Parser a -> IO ()
-type HCMain a b = Handle -> Handle -> CMain a b
+type Parser err a = Handle -> IO (Either err a)
+type ParsecParser a = Stream BS.ByteString Identity Char => Parsec BS.ByteString () a
+type CMain err a b = Parser err a -> Solver a b -> Printer b -> IO ()
+type HCMain err a b = Handle -> Handle -> CMain err a b
 
-instance Monad m => Stream C.ByteString m Char where
-   uncons = return . C.uncons
-
-hContestMain :: HCMain a b
-hContestMain hin hout printer solver parser = do
-   input <- C.hGetContents hin
-   case parse parser "" input of
-      Left err -> do { hPutStr stderr "parse err: "; hPrint stderr err }
-      Right x  -> printer hout $ solver x
-
-contestMain :: CMain a b
+contestMain :: Show err => CMain err a b
 contestMain = hContestMain stdin stdout
 
-hContestMainN :: Int -> HCMain a b
+hContestMain :: Show err => HCMain err a b
+hContestMain hin hout parser solver printer = do
+   input <- parser hin
+   case input of
+      Left err -> do { hPutStr stderr "parse error: "; hPrint stderr err }
+      Right x  -> printer hout $ solver x
+
+hContestMainN :: Show err => Int -> HCMain err a b
 hContestMainN n hin hout printer solver parser = mapM_ f [1..n]
    where
       f _ = hContestMain hin hout printer solver parser
 
-gcjMain :: CMain a b
-gcjMain = hGCJMain stdin stdout
+parserWithoutError :: (Handle -> IO a) -> Parser ParseError a
+parserWithoutError f h = Right <$> f h
 
-hGCJMain :: Handle -> Handle -> CMain a b
-hGCJMain hin hout printer solver parser =
-   hContestMain hin hout gcjPrinter gcjSolver gcjParser
+parsec :: ParsecParser a -> Parser ParseError a
+parsec p hin = runParser p () "" <$> BS.hGetContents hin
+
+gcjParsec :: ParsecParser a -> Parser ParseError [a]
+gcjParsec p = parsec (p' <?> "gcjParsec")
    where
-      gcjPrinter h xs = mapM_ f $ zip xs ([1..] :: [Int])
-         where
-            f (x, i) = do
-               hPrintf h "Case #%d: " i
-               printer h x
-      gcjSolver = map solver
-      gcjParser =
-         do  t <- number
-             spaces
-             count t parser
-         <?> "GCJMain"
+      p' = do
+         t <- number
+         spaces
+         count t p
 
-gcjMainLn :: CMain a b
-gcjMainLn = hGCJMainLn stdin stdout
-
-hGCJMainLn :: Handle -> Handle -> CMain a b
-hGCJMainLn hin hout printer solver parser =
-   hContestMain hin hout gcjPrinter gcjSolver gcjParser
+gcjPrinter :: Printer b -> Printer [b]
+gcjPrinter p h xs = mapM_ f $ zip xs ([1..] :: [Int])
    where
-      gcjPrinter h xs = mapM_ f $ zip xs ([1..] :: [Int])
-         where
-            f (x, i) = do
-               hPrintf h "Case #%d:\n" i
-               printer h x
-      gcjSolver = map solver
-      gcjParser =
-         do  t <- number
-             spaces
-             count t parser
-         <?> "GCJMain"
+      f (x, i) = do
+         hPrintf h "Case #$d: " i
+         p h x
+
+gcjPrinterLn :: Printer b -> Printer [b]
+gcjPrinterLn p h xs = mapM_ f $ zip xs ([1..] :: [Int])
+   where
+      f (x, i) = do
+         hPrintf h "Case #%d:\n" i
+         p h x
 
 -- vim: set expandtab:
