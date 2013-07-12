@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE Rank2Types #-}
 module Milib.Contest
@@ -11,23 +12,23 @@ module Milib.Contest
    , hGCJMainLn
    ) where
 
-import Milib.IO
-import qualified Data.ByteString.Lazy.Char8 as C
-import System.IO
-import Text.Parsec.Prim
-import Text.Parsec.Combinator
-import Text.Parsec.Char
-import Text.Printf
-import Data.Functor.Identity
 import Control.Monad
+import qualified Data.ByteString.Lazy.Char8 as C
+import Data.Functor.Identity
+import System.IO
+import Text.Parsec.Char
+import Text.Parsec.Combinator
+import Text.Parsec.Prim
+import Text.Printf
+import Milib.IO
 
-type Printer a = Handle -> a -> IO ()
+type Printer b = Handle -> b -> IO ()
 type Solver a b = a -> b
-type Parser b = Stream C.ByteString Identity Char => Parsec C.ByteString () b
+type Parser a = Stream C.ByteString Identity Char => Parsec C.ByteString () a
 type CMain a b = Printer b -> Solver a b -> Parser a -> IO ()
 type HCMain a b = Handle -> Handle -> CMain a b
 
-instance Stream C.ByteString Identity Char where
+instance Monad m => Stream C.ByteString m Char where
    uncons = return . C.uncons
 
 hContestMain :: HCMain a b
